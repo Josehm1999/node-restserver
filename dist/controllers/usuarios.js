@@ -8,50 +8,65 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.patchUsuario = exports.deleteUsuario = exports.putUsuario = exports.postUsuario = exports.getUsuario = exports.getUsuarios = void 0;
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const usuario_1 = __importDefault(require("../models/usuario"));
 const getUsuarios = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const usuarios = yield usuario_1.default.findAll();
+    const limite = Number(req.query.limite) || 5;
+    const desde = Number(req.query.desde) || 0;
+    const query = { estado: true };
+    const [usuarios, total] = yield Promise.all([
+        usuario_1.default.find(query)
+            .skip(Number(desde))
+            .limit(Number(limite)),
+        usuario_1.default.countDocuments(query)
+    ]);
     res.json({
-        usuarios
+        usuarios,
+        total
     });
 });
 exports.getUsuarios = getUsuarios;
 const getUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const usuario = yield usuario_1.default.findByPk(id);
-    if (usuario) {
-        res.json(usuario);
-    }
-    else {
-        res.json({
-            msg: `No existe un usuario con el id ${id}`,
-            id
-        });
-    }
+    const usuario = yield usuario_1.default.findById(id);
+    res.json({
+        usuario
+    });
 });
 exports.getUsuario = getUsuario;
 const postUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { body } = req;
+    const { nombre, correo, password, rol } = req.body;
+    const usuario = new usuario_1.default({
+        nombre,
+        correo,
+        password,
+        rol
+    });
+    // Encriptar la contraseña
+    const salt = bcryptjs_1.default.genSaltSync();
+    usuario.password = bcryptjs_1.default.hashSync(password, salt);
+    // Guardar en BD
+    yield usuario.save();
     try {
-        const existeEmail = yield usuario_1.default.findOne({
-            where: {
-                email: body.email
-            }
+        res.json({
+            usuario
         });
-        if (existeEmail) {
-            return res.status(400).json({
-                msg: 'Ya existe un usuario con el email' + body.email
-            });
-        }
-        ;
-        const usuario = yield usuario_1.default.create(body);
-        yield usuario.save();
-        res.json(usuario);
     }
     catch (error) {
         console.log(error);
@@ -59,43 +74,25 @@ const postUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             msg: 'Hable con el administrador',
         });
     }
+    ;
 });
 exports.postUsuario = postUsuario;
 const putUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { body } = req;
-    try {
-        const usuario = yield usuario_1.default.findByPk(id);
-        if (!usuario) {
-            return res.status(404).json({
-                msg: 'No existe un usuario con el id' + id
-            });
-        }
-        ;
-        yield usuario.update(body);
-        res.json(usuario);
+    const _a = req.body, { _id, password, google, correo } = _a, resto = __rest(_a, ["_id", "password", "google", "correo"]);
+    // Validadr contra base de datos
+    if (password) {
+        const salt = bcryptjs_1.default.genSaltSync();
+        resto.password = bcryptjs_1.default.hashSync(password, salt);
     }
-    catch (error) {
-        console.log(error);
-        res.status(500).json({
-            msg: 'Hable con el administrador',
-        });
-    }
-    res.json({
-        msg: 'putUsuario',
-        body
-    });
+    const usuario = yield usuario_1.default.findByIdAndUpdate(id, resto);
+    res.json(usuario);
 });
 exports.putUsuario = putUsuario;
 const deleteUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const usuario = yield usuario_1.default.findByPk(id);
-    if (!usuario) {
-        return res.status(400).json({
-            msg: 'No existe un usuario con el id ' + id
-        });
-    }
-    yield usuario.update({ estado: false });
+    //Cambiar el estado del usuario
+    const usuario = yield usuario_1.default.findByIdAndUpdate(id, { estado: false });
     res.json(usuario);
 });
 exports.deleteUsuario = deleteUsuario;
