@@ -1,8 +1,12 @@
 import { Router } from "express";
 import { check } from "express-validator";
 
+import {
+    validarCampos,
+    validarJWT,
+    tieneRole
+} from '../middlewares'
 
-import {validarCampos} from "../middlewares/validar-campos";
 import { esRolValido, existeCorreo, existeUsuarioById } from "../helpers/db-validators";
 
 import {
@@ -28,18 +32,20 @@ router.post('/',[
 ], postUsuario);
 
 router.put('/:id',[
+    validarJWT,
     check('id', 'No es un ID  válido').isMongoId(),
     check('id','El usuario no existe').custom(existeUsuarioById),
-    check('nombre', 'El nombre es obligatorio').notEmpty(),
     check('rol').custom( esRolValido ),
     validarCampos
 ],putUsuario);
 
 router.delete('/:id',[
+    validarJWT,
+    // esAdminRole,
+    tieneRole('ADMIN','VENTAS'),
     check('id', 'No es un ID  válido').isMongoId(),
     check('id','El usuario no existe').custom(existeUsuarioById),
     validarCampos
 ], deleteUsuario);
-
 
 export default router;

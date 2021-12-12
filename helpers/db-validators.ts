@@ -25,3 +25,5 @@ export const existeUsuarioById = async(id: Schema.ObjectId) =>{
 	throw new Error('El id no existe ${ id }')
     }
 }
+
+

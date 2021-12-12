@@ -93,7 +93,8 @@ const deleteUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const { id } = req.params;
     //Cambiar el estado del usuario
     const usuario = yield usuario_1.default.findByIdAndUpdate(id, { estado: false });
-    res.json(usuario);
+    const usuarioA = req.body.usuarioAutorizado;
+    res.json({ usuario, usuarioA });
 });
 exports.deleteUsuario = deleteUsuario;
 const patchUsuario = (req, res) => {

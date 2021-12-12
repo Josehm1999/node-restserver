@@ -15,11 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const usuarios_1 = __importDefault(require("../routes/usuarios"));
+const auth_1 = __importDefault(require("../routes/auth"));
 const config_1 = __importDefault(require("../database/config"));
 class Server {
     constructor() {
         this.apiPaths = {
-            usuarios: '/usuarios'
+            usuarios: '/usuarios',
+            auth: '/auth',
+            error: '/error'
         };
         this.app = (0, express_1.default)();
         this.port = process.env.PORT || '8080';
@@ -42,7 +45,11 @@ class Server {
         this.app.use(express_1.default.static('public'));
     }
     routes() {
+        this.app.use(this.apiPaths.auth, auth_1.default);
         this.app.use(this.apiPaths.usuarios, usuarios_1.default);
+        this.app.use(this.apiPaths.error, () => {
+            throw new Error("Algo ha salido mal");
+        });
     }
     ;
     listen() {

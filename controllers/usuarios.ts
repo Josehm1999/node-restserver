@@ -83,10 +83,13 @@ export const putUsuario = async( req: Request, res: Response )=>{
 };
 
 export const deleteUsuario = async( req: Request, res: Response )=>{
-    const {id} = req.params; 
+
+    const {id} = req.params;
+
     //Cambiar el estado del usuario
     const usuario = await Usuario.findByIdAndUpdate(id, {estado: false});
-    res.json(usuario);
+    const usuarioA = req.body.usuarioAutorizado;
+    res.json({usuario, usuarioA});
 };
 
 

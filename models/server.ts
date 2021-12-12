@@ -1,6 +1,8 @@
 import express, {Application} from 'express'
 import cors from 'cors'
+
 import usuariosRoutes from '../routes/usuarios'
+import authRoutes from '../routes/auth'
 import dbConnection from '../database/config'
 
 class Server {
@@ -8,7 +10,9 @@ class Server {
     private app: Application;
     private port: string; 
     private apiPaths = {
-    usuarios:'/usuarios'
+	usuarios:'/usuarios',
+	auth:'/auth',
+	error:'/error'
     };
 
     constructor(){
@@ -35,7 +39,11 @@ class Server {
     }
 
     routes(){
+	this.app.use(this.apiPaths.auth, authRoutes)
 	this.app.use(this.apiPaths.usuarios, usuariosRoutes);
+	this.app.use(this.apiPaths.error, () =>{
+	    throw new Error("Algo ha salido mal");
+	})
     };
 
     listen(){
