@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = void 0;
+exports.googleSignIn = exports.login = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const usuario_1 = __importDefault(require("../models/usuario"));
 const generarJWT_1 = require("../helpers/generarJWT");
+const google_verify_1 = require("../helpers/google-verify");
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { correo, password } = req.body;
     try {
@@ -54,4 +55,43 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
+const googleSignIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id_token } = req.body;
+    try {
+        const { nombre, img, correo } = yield (0, google_verify_1.googleVerify)(id_token);
+        let usuario = yield usuario_1.default.findOne({ correo });
+        if (!usuario) {
+            const data = {
+                nombre,
+                correo,
+                password: "IdontKnowWhyImStillAwake",
+                img,
+                rol: "USER",
+                google: true
+            };
+            usuario = yield usuario_1.default.create(data);
+            console.log(usuario);
+        }
+        else {
+            yield usuario.updateOne({ google: true });
+        }
+        if (!usuario.estado) {
+            return res.status(401).json({
+                msg: 'Usuario bloqueado'
+            });
+        }
+        // Generar el JWT	
+        const jwt = yield (0, generarJWT_1.generarJWT)(usuario.id);
+        res.json({
+            usuario,
+            jwt
+        });
+    }
+    catch (error) {
+        res.status(400).json({
+            msg: 'El token no se pudo verificar',
+        });
+    }
+});
+exports.googleSignIn = googleSignIn;
 //# sourceMappingURL=auth.js.map

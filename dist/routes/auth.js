@@ -13,5 +13,9 @@ router.post('/login', [
     (0, express_validator_1.check)('password', 'La contraseña es obligatoria').isLength({ min: 6 }),
     validar_campos_1.default
 ], auth_1.login);
+router.post('/google', [
+    (0, express_validator_1.check)('id_token', 'El ID de Google es necesario').notEmpty(),
+    validar_campos_1.default
+], auth_1.googleSignIn);
 exports.default = router;
 //# sourceMappingURL=auth.js.map

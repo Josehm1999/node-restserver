@@ -1,4 +1,4 @@
-import mongoose, {Schema, Model, Document} from "mongoose"
+import  {Schema,model, Document} from "mongoose"
 
 
 export interface IUsuario extends Document {
@@ -11,7 +11,6 @@ export interface IUsuario extends Document {
     google?: Boolean
 }
 
-export interface IUsuarioModel extends Model<IUsuario> {}
 
 const UsuarioSchema: Schema = new Schema({
     nombre: {
@@ -33,7 +32,8 @@ const UsuarioSchema: Schema = new Schema({
     rol: {
 	type: String,
 	required: true,
-	enum: ['ADMIN', 'USER']
+	default: 'USER',
+	enum: ['ADMIN', 'USER', 'VENTAS']
     },
     estado: {
 	type: Boolean,
@@ -53,4 +53,4 @@ UsuarioSchema.methods.toJSON = function() {
 }
 
 
-export default mongoose.model<IUsuario>('Usuario', UsuarioSchema);
+export default model<IUsuario>('Usuario', UsuarioSchema);
