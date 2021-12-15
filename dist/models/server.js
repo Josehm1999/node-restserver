@@ -16,12 +16,18 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const usuarios_1 = __importDefault(require("../routes/usuarios"));
 const auth_1 = __importDefault(require("../routes/auth"));
+const categorias_1 = __importDefault(require("../routes/categorias"));
+const productos_1 = __importDefault(require("../routes/productos"));
+const buscar_1 = __importDefault(require("../routes/buscar"));
 const config_1 = __importDefault(require("../database/config"));
 class Server {
     constructor() {
         this.apiPaths = {
             usuarios: '/usuarios',
             auth: '/auth',
+            categorias: '/categorias',
+            productos: '/productos',
+            buscar: '/buscar',
             error: '/error'
         };
         this.app = (0, express_1.default)();
@@ -47,6 +53,9 @@ class Server {
     routes() {
         this.app.use(this.apiPaths.auth, auth_1.default);
         this.app.use(this.apiPaths.usuarios, usuarios_1.default);
+        this.app.use(this.apiPaths.categorias, categorias_1.default);
+        this.app.use(this.apiPaths.productos, productos_1.default);
+        this.app.use(this.apiPaths.buscar, buscar_1.default);
         this.app.use(this.apiPaths.error, () => {
             throw new Error("Algo ha salido mal");
         });

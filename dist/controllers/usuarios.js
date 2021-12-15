@@ -25,16 +25,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.patchUsuario = exports.deleteUsuario = exports.putUsuario = exports.postUsuario = exports.getUsuario = exports.getUsuarios = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const usuario_1 = __importDefault(require("../models/usuario"));
+const models_1 = require("../models");
 const getUsuarios = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const limite = Number(req.query.limite) || 5;
     const desde = Number(req.query.desde) || 0;
     const query = { estado: true };
     const [usuarios, total] = yield Promise.all([
-        usuario_1.default.find(query)
+        models_1.Usuario.find(query)
             .skip(Number(desde))
             .limit(Number(limite)),
-        usuario_1.default.countDocuments(query)
+        models_1.Usuario.countDocuments(query)
     ]);
     res.json({
         usuarios,
@@ -44,7 +44,7 @@ const getUsuarios = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getUsuarios = getUsuarios;
 const getUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const usuario = yield usuario_1.default.findById(id);
+    const usuario = yield models_1.Usuario.findById(id);
     res.json({
         usuario
     });
@@ -52,7 +52,7 @@ const getUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.getUsuario = getUsuario;
 const postUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { nombre, correo, password, rol } = req.body;
-    const usuario = new usuario_1.default({
+    const usuario = new models_1.Usuario({
         nombre,
         correo,
         password,
@@ -85,14 +85,14 @@ const putUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const salt = bcryptjs_1.default.genSaltSync();
         resto.password = bcryptjs_1.default.hashSync(password, salt);
     }
-    const usuario = yield usuario_1.default.findByIdAndUpdate(id, resto);
+    const usuario = yield models_1.Usuario.findByIdAndUpdate(id, resto);
     res.json(usuario);
 });
 exports.putUsuario = putUsuario;
 const deleteUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     //Cambiar el estado del usuario
-    const usuario = yield usuario_1.default.findByIdAndUpdate(id, { estado: false });
+    const usuario = yield models_1.Usuario.findByIdAndUpdate(id, { estado: false });
     const usuarioA = req.body.usuarioAutorizado;
     res.json({ usuario, usuarioA });
 });

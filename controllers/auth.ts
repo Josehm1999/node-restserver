@@ -1,15 +1,14 @@
 import { Response, Request } from "express"; 
 import bcryptjs from "bcryptjs";
 
-import Usuario, {IUsuario} from "../models/usuario";
+import {Usuario} from "../models";
 import {generarJWT} from "../helpers/generarJWT";
 import {googleVerify} from "../helpers/google-verify";
-type reqBody = {
+
+const login = async(req: Request<{},{},{
     correo: string,
     password: string
-}
-
-export const login = async(req: Request<{},{},reqBody,{}>, res: Response) => {
+},{}>, res: Response) => {
 
     const {correo, password} = req.body;
 
@@ -54,11 +53,11 @@ export const login = async(req: Request<{},{},reqBody,{}>, res: Response) => {
 
 }
 
-export const googleSignIn = async(req: Request, res: Response) =>{
+const googleSignIn = async(req: Request, res: Response) =>{
     const {id_token} = req.body;
     try {
     const {nombre, img, correo} = await googleVerify(id_token);
-    let usuario = await Usuario.findOne({correo}) as IUsuario;
+    let usuario = await Usuario.findOne({correo}) ;
     if(!usuario) {
 	const data = {	
 	    nombre,
@@ -91,9 +90,9 @@ export const googleSignIn = async(req: Request, res: Response) =>{
 	    msg: 'El token no se pudo verificar',
 	})	
     }
+}
 
-
-
-
-
+export {
+    login,
+    googleSignIn
 }

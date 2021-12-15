@@ -9,7 +9,7 @@ import {
 
 import { esRolValido, existeCorreo, existeUsuarioById } from "../helpers/db-validators";
 
-import {
+import { 
     deleteUsuario,
     getUsuario,
     getUsuarios,
@@ -18,8 +18,14 @@ import {
 
 const router = Router();
 
-router.get('/:id',getUsuario);
+
 router.get('/', getUsuarios);
+
+router.get('/:id',[
+    check('id', 'No es un ID  válido').isMongoId(),
+    check('id','El usuario no existe').custom(existeUsuarioById),
+    validarCampos
+],getUsuario);
 
 router.post('/',[
     check('nombre', 'El nombre es obligatorio').notEmpty(),
@@ -37,7 +43,7 @@ router.put('/:id',[
     check('id','El usuario no existe').custom(existeUsuarioById),
     check('rol').custom( esRolValido ),
     validarCampos
-],putUsuario);
+],putUsuario); 
 
 router.delete('/:id',[
     validarJWT,

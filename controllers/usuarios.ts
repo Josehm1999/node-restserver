@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
 import bcryptjs from "bcryptjs";
+import {Usuario} from "../models";
 
-import Usuario from "../models/usuario";
 
-
-export const getUsuarios = async( req: Request, res: Response )=>{
+const getUsuarios = async( req: Request, res: Response )=>{
     
     const limite: Number = Number(req.query.limite) || 5;
     const desde: Number = Number(req.query.desde) || 0;
@@ -25,7 +24,7 @@ export const getUsuarios = async( req: Request, res: Response )=>{
 
 };
 
-export const getUsuario = async ( req: Request, res: Response )=>{
+const getUsuario = async ( req: Request, res: Response )=>{
     const {id} = req.params;
 
     const usuario = await Usuario.findById(id);
@@ -36,7 +35,7 @@ export const getUsuario = async ( req: Request, res: Response )=>{
 };
 
 
-export const postUsuario = async( req: Request, res: Response )=>{
+const postUsuario = async( req: Request, res: Response )=>{
 
     const {nombre, correo, password, rol} = req.body;
     const usuario = new Usuario({
@@ -68,7 +67,7 @@ export const postUsuario = async( req: Request, res: Response )=>{
 };
 
 
-export const putUsuario = async( req: Request, res: Response )=>{
+const putUsuario = async( req: Request, res: Response )=>{
     const {id} = req.params;
     const {_id, password, google,correo, ...resto} = req.body;
     
@@ -82,7 +81,7 @@ export const putUsuario = async( req: Request, res: Response )=>{
 
 };
 
-export const deleteUsuario = async( req: Request, res: Response )=>{
+const deleteUsuario = async( req: Request, res: Response )=>{
 
     const {id} = req.params;
 
@@ -93,8 +92,19 @@ export const deleteUsuario = async( req: Request, res: Response )=>{
 };
 
 
-export const patchUsuario = (req:Request, res: Response) =>{
+const patchUsuario = (req:Request, res: Response) =>{
     res.status(200).json({
 	msg: 'Ruta aún no implementada'
     })
 }
+
+export {
+    getUsuarios,
+    getUsuario,
+    postUsuario,
+    putUsuario,
+    deleteUsuario,
+    patchUsuario
+}
+
+

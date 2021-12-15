@@ -1,8 +1,14 @@
-import Rol from "../models/rol";
-import Usuario from "../models/usuario";
 import Schema from "mongoose";
 
-export const esRolValido = async(rol = '') =>{
+import {
+    Categoria,
+    Producto,
+    Usuario,
+    Rol
+} from "../models";
+
+
+const esRolValido = async(rol = '') =>{
 
     const existeRol = await Rol.findOne({ rol });
 	if(!existeRol) {
@@ -10,7 +16,7 @@ export const esRolValido = async(rol = '') =>{
 		}
 }
 
-export const existeCorreo = async(correo = '') =>{
+const existeCorreo = async(correo = '') =>{
     //Verificar si el correo existe
     const existeE = await Usuario.findOne({correo});
     if(existeE){
@@ -18,12 +24,34 @@ export const existeCorreo = async(correo = '') =>{
     }
 }
 
-export const existeUsuarioById = async(id: Schema.ObjectId) =>{
+const existeUsuarioById = async(id: Schema.ObjectId) =>{
     //Verificar si el usuario existe
     const existeUsuario = await Usuario.findById(id);
     if(!existeUsuario){
-	throw new Error('El id no existe ${ id }')
+	throw new Error('El id no existe ')
     }
 }
 
+const existeCategoriaById = async(id:Schema.ObjectId) =>{
+    const existeCategoria = await Categoria.findById(id);
+    if(!existeCategoria){
+	throw new Error(`La categoría no existe`);
+    }
+}
+
+const existeProductoById = async(id: Schema.ObjectId) =>{
+    const existeProducto = await Producto.findById(id);
+    if(!existeProducto){
+	throw new Error(`El producto no existe`);
+    }
+
+}
+
+export {
+    existeCategoriaById,
+    existeUsuarioById,
+    existeCorreo,
+    existeProductoById,
+    esRolValido
+}
 

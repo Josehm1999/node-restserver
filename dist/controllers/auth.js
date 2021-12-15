@@ -14,14 +14,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.googleSignIn = exports.login = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const usuario_1 = __importDefault(require("../models/usuario"));
+const models_1 = require("../models");
 const generarJWT_1 = require("../helpers/generarJWT");
 const google_verify_1 = require("../helpers/google-verify");
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { correo, password } = req.body;
     try {
         // Verificar si el usuario existe
-        const usuario = yield usuario_1.default.findOne({ correo });
+        const usuario = yield models_1.Usuario.findOne({ correo });
         if (!usuario) {
             return res.status(400).json({
                 msg: 'Usuario / Password no son correctos'
@@ -59,7 +59,7 @@ const googleSignIn = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const { id_token } = req.body;
     try {
         const { nombre, img, correo } = yield (0, google_verify_1.googleVerify)(id_token);
-        let usuario = yield usuario_1.default.findOne({ correo });
+        let usuario = yield models_1.Usuario.findOne({ correo });
         if (!usuario) {
             const data = {
                 nombre,
@@ -69,7 +69,7 @@ const googleSignIn = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 rol: "USER",
                 google: true
             };
-            usuario = yield usuario_1.default.create(data);
+            usuario = yield models_1.Usuario.create(data);
             console.log(usuario);
         }
         else {

@@ -8,15 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.existeUsuarioById = exports.existeCorreo = exports.esRolValido = void 0;
-const rol_1 = __importDefault(require("../models/rol"));
-const usuario_1 = __importDefault(require("../models/usuario"));
+exports.esRolValido = exports.existeProductoById = exports.existeCorreo = exports.existeUsuarioById = exports.existeCategoriaById = void 0;
+const models_1 = require("../models");
 const esRolValido = (rol = '') => __awaiter(void 0, void 0, void 0, function* () {
-    const existeRol = yield rol_1.default.findOne({ rol });
+    const existeRol = yield models_1.Rol.findOne({ rol });
     if (!existeRol) {
         throw new Error(`El rol ${rol} no está registrado en la BD`);
     }
@@ -24,7 +20,7 @@ const esRolValido = (rol = '') => __awaiter(void 0, void 0, void 0, function* ()
 exports.esRolValido = esRolValido;
 const existeCorreo = (correo = '') => __awaiter(void 0, void 0, void 0, function* () {
     //Verificar si el correo existe
-    const existeE = yield usuario_1.default.findOne({ correo });
+    const existeE = yield models_1.Usuario.findOne({ correo });
     if (existeE) {
         throw new Error('El correo ya está registrado');
     }
@@ -32,10 +28,24 @@ const existeCorreo = (correo = '') => __awaiter(void 0, void 0, void 0, function
 exports.existeCorreo = existeCorreo;
 const existeUsuarioById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     //Verificar si el usuario existe
-    const existeUsuario = yield usuario_1.default.findById(id);
+    const existeUsuario = yield models_1.Usuario.findById(id);
     if (!existeUsuario) {
-        throw new Error('El id no existe ${ id }');
+        throw new Error('El id no existe ');
     }
 });
 exports.existeUsuarioById = existeUsuarioById;
+const existeCategoriaById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const existeCategoria = yield models_1.Categoria.findById(id);
+    if (!existeCategoria) {
+        throw new Error(`La categoría no existe`);
+    }
+});
+exports.existeCategoriaById = existeCategoriaById;
+const existeProductoById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const existeProducto = yield models_1.Producto.findById(id);
+    if (!existeProducto) {
+        throw new Error(`El producto no existe`);
+    }
+});
+exports.existeProductoById = existeProductoById;
 //# sourceMappingURL=db-validators.js.map

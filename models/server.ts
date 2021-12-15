@@ -3,6 +3,9 @@ import cors from 'cors'
 
 import usuariosRoutes from '../routes/usuarios'
 import authRoutes from '../routes/auth'
+import categoriasRoutes from "../routes/categorias"
+import productosRoutes from "../routes/productos"
+import buscarRoutes from "../routes/buscar";
 import dbConnection from '../database/config'
 
 class Server {
@@ -12,6 +15,9 @@ class Server {
     private apiPaths = {
 	usuarios:'/usuarios',
 	auth:'/auth',
+	categorias: '/categorias',
+	productos: '/productos',
+	buscar: '/buscar',
 	error:'/error'
     };
 
@@ -40,7 +46,10 @@ class Server {
 
     routes(){
 	this.app.use(this.apiPaths.auth, authRoutes)
-	this.app.use(this.apiPaths.usuarios, usuariosRoutes);
+	this.app.use(this.apiPaths.usuarios, usuariosRoutes)
+	this.app.use(this.apiPaths.categorias, categoriasRoutes)
+	this.app.use(this.apiPaths.productos, productosRoutes)
+	this.app.use(this.apiPaths.buscar, buscarRoutes)
 	this.app.use(this.apiPaths.error, () =>{
 	    throw new Error("Algo ha salido mal");
 	})
