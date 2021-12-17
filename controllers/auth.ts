@@ -2,8 +2,7 @@ import { Response, Request } from "express";
 import bcryptjs from "bcryptjs";
 
 import {Usuario} from "../models";
-import {generarJWT} from "../helpers/generarJWT";
-import {googleVerify} from "../helpers/google-verify";
+import {generarJWT, googleVerify} from "../helpers";
 
 const login = async(req: Request<{},{},{
     correo: string,

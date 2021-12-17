@@ -44,7 +44,13 @@ const existeProductoById = async(id: Schema.ObjectId) =>{
     if(!existeProducto){
 	throw new Error(`El producto no existe`);
     }
+}
 
+const coleccionesPermitidas = async (coleccion='', colecciones:string[] = []) => {
+    const incluida = colecciones.includes(coleccion);
+    if(!incluida){
+	throw new Error(`La coleccion ${coleccion} no esta permitida; Permitidas: ${colecciones}`);
+    }
 }
 
 export {
@@ -52,6 +58,7 @@ export {
     existeUsuarioById,
     existeCorreo,
     existeProductoById,
-    esRolValido
+    esRolValido,
+    coleccionesPermitidas
 }
 

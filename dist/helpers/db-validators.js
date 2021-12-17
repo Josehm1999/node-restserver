@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.esRolValido = exports.existeProductoById = exports.existeCorreo = exports.existeUsuarioById = exports.existeCategoriaById = void 0;
+exports.coleccionesPermitidas = exports.esRolValido = exports.existeProductoById = exports.existeCorreo = exports.existeUsuarioById = exports.existeCategoriaById = void 0;
 const models_1 = require("../models");
 const esRolValido = (rol = '') => __awaiter(void 0, void 0, void 0, function* () {
     const existeRol = yield models_1.Rol.findOne({ rol });
@@ -48,4 +48,11 @@ const existeProductoById = (id) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.existeProductoById = existeProductoById;
+const coleccionesPermitidas = (coleccion = '', colecciones = []) => __awaiter(void 0, void 0, void 0, function* () {
+    const incluida = colecciones.includes(coleccion);
+    if (!incluida) {
+        throw new Error(`La coleccion ${coleccion} no esta permitida; Permitidas: ${colecciones}`);
+    }
+});
+exports.coleccionesPermitidas = coleccionesPermitidas;
 //# sourceMappingURL=db-validators.js.map

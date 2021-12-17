@@ -14,11 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
-const usuarios_1 = __importDefault(require("../routes/usuarios"));
-const auth_1 = __importDefault(require("../routes/auth"));
-const categorias_1 = __importDefault(require("../routes/categorias"));
-const productos_1 = __importDefault(require("../routes/productos"));
-const buscar_1 = __importDefault(require("../routes/buscar"));
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
+const cloudinary_1 = require("cloudinary");
+const routes_1 = require("../routes");
 const config_1 = __importDefault(require("../database/config"));
 class Server {
     constructor() {
@@ -28,10 +26,11 @@ class Server {
             categorias: '/categorias',
             productos: '/productos',
             buscar: '/buscar',
+            uploads: '/uploads',
             error: '/error'
         };
         this.app = (0, express_1.default)();
-        this.port = process.env.PORT || '8080';
+        this.port = `${process.env.PORT}`;
         //Conexión a DB
         this.conexiónDB();
         this.middlewares();
@@ -49,13 +48,26 @@ class Server {
         this.app.use(express_1.default.json());
         //Carpeta pública
         this.app.use(express_1.default.static('public'));
+        //FileUpload - Carga de archivos
+        this.app.use((0, express_fileupload_1.default)({
+            useTempFiles: true,
+            tempFileDir: '/tmp/',
+            createParentPath: true
+        }));
+        // Cloudinary	
+        cloudinary_1.v2.config({
+            cloud_name: process.env.CLOUD_NAME,
+            api_key: process.env.API_KEY,
+            api_secret: process.env.API_SECRET
+        });
     }
     routes() {
-        this.app.use(this.apiPaths.auth, auth_1.default);
-        this.app.use(this.apiPaths.usuarios, usuarios_1.default);
-        this.app.use(this.apiPaths.categorias, categorias_1.default);
-        this.app.use(this.apiPaths.productos, productos_1.default);
-        this.app.use(this.apiPaths.buscar, buscar_1.default);
+        this.app.use(this.apiPaths.auth, routes_1.authRoutes);
+        this.app.use(this.apiPaths.usuarios, routes_1.usuariosRoutes);
+        this.app.use(this.apiPaths.categorias, routes_1.categoriasRoutes);
+        this.app.use(this.apiPaths.productos, routes_1.productosRoutes);
+        this.app.use(this.apiPaths.buscar, routes_1.buscarRoutes);
+        this.app.use(this.apiPaths.uploads, routes_1.uploadRoutes);
         this.app.use(this.apiPaths.error, () => {
             throw new Error("Algo ha salido mal");
         });

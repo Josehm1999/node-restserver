@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express";
 import jwt from "jsonwebtoken";
 
-import Usuario, {IUsuario} from "../models/usuario";
+import {Usuario, IUsuario} from "../models";
 
 
 const validarJWT = async(req: Request<{},{}, {usuarioAutorizado: IUsuario},{}>, res: Response, next: NextFunction) =>{

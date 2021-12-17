@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
     
-export const esAdminRole = (req: Request, res: Response, next: NextFunction) =>{
+const esAdminRole = (req: Request, res: Response, next: NextFunction) =>{
     if(!req.body.usuarioAutorizado){
 	return res.status(500).json({
 	    msg: 'Se quiere verificar el rol con un token invalido '
@@ -17,7 +17,7 @@ export const esAdminRole = (req: Request, res: Response, next: NextFunction) =>{
     next();
 }
 
-export const tieneRole = (...roles: string[]) => {
+const tieneRole = (...roles: string[]) => {
     return (req: Request, res:Response, next: NextFunction) => {
 	if(!req.body.usuarioAutorizado) {
 	    return res.status(500).json({
@@ -31,4 +31,9 @@ export const tieneRole = (...roles: string[]) => {
 	}
 	next();	
     }
+}
+
+export {
+    esAdminRole,
+    tieneRole
 }

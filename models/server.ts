@@ -1,11 +1,17 @@
 import express, {Application} from 'express'
 import cors from 'cors'
+import fileUpload from 'express-fileupload'
+import {v2 as cloudinary} from 'cloudinary'
+import {
+    usuariosRoutes,
+    authRoutes,
+    categoriasRoutes, 
+    buscarRoutes,
+    productosRoutes,
+    uploadRoutes
+}
+from '../routes'
 
-import usuariosRoutes from '../routes/usuarios'
-import authRoutes from '../routes/auth'
-import categoriasRoutes from "../routes/categorias"
-import productosRoutes from "../routes/productos"
-import buscarRoutes from "../routes/buscar";
 import dbConnection from '../database/config'
 
 class Server {
@@ -18,12 +24,13 @@ class Server {
 	categorias: '/categorias',
 	productos: '/productos',
 	buscar: '/buscar',
+	uploads: '/uploads',
 	error:'/error'
     };
 
     constructor(){
 	this.app = express();
-	this.port = process.env.PORT || '8080';
+	this.port = `${process.env.PORT}`;
 
 	//Conexión a DB
 	this.conexiónDB();
@@ -41,7 +48,19 @@ class Server {
 	// Lectura y Parseo del body
 	this.app.use(express.json());
 	//Carpeta pública
-	this.app.use(express.static('public'));		
+	this.app.use(express.static('public'));
+	//FileUpload - Carga de archivos
+	this.app.use(fileUpload({
+	    useTempFiles: true,
+	    tempFileDir: '/tmp/',
+	    createParentPath: true
+	}));
+	// Cloudinary	
+	cloudinary.config({
+	cloud_name: process.env.CLOUD_NAME,
+	api_key: process.env.API_KEY,
+	api_secret: process.env.API_SECRET
+	});
     }
 
     routes(){
@@ -50,6 +69,7 @@ class Server {
 	this.app.use(this.apiPaths.categorias, categoriasRoutes)
 	this.app.use(this.apiPaths.productos, productosRoutes)
 	this.app.use(this.apiPaths.buscar, buscarRoutes)
+	this.app.use(this.apiPaths.uploads, uploadRoutes)
 	this.app.use(this.apiPaths.error, () =>{
 	    throw new Error("Algo ha salido mal");
 	})

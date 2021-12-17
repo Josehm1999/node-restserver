@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { check } from "express-validator";
 
-import validarCampos from "../middlewares/validar-campos";
+import {validarCampos} from "../middlewares";
 import { login, googleSignIn } from "../controllers/auth";
 
 const router = Router();

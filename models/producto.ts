@@ -7,7 +7,8 @@ export interface IProducto extends Document{
     precio?: number,
     categoria: Schema.Types.ObjectId,
     descripcion?: string,
-    disponible?: boolean
+    disponible?: boolean,
+    img?:string
 } 
 
 
@@ -17,7 +18,7 @@ const ProductoSchema: Schema = new Schema({
 	unique: true,
 	required: [true, 'El nombre es obligatorio']
     },
-    estado:{
+    estado:{ 
 	type: Boolean,
 	required: [true, 'El estado es obligatorio'],
 	default: true
@@ -42,6 +43,9 @@ const ProductoSchema: Schema = new Schema({
     disponible: {
 	type:Boolean,
 	default: true
+    },
+    img: {
+	type: String
     }
 });
 

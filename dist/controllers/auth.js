@@ -15,8 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.googleSignIn = exports.login = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const models_1 = require("../models");
-const generarJWT_1 = require("../helpers/generarJWT");
-const google_verify_1 = require("../helpers/google-verify");
+const helpers_1 = require("../helpers");
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { correo, password } = req.body;
     try {
@@ -41,7 +40,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
         // Generar el JWT
-        const jwt = yield (0, generarJWT_1.generarJWT)(usuario.id);
+        const jwt = yield (0, helpers_1.generarJWT)(usuario.id);
         res.json({
             usuario,
             jwt
@@ -58,7 +57,7 @@ exports.login = login;
 const googleSignIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id_token } = req.body;
     try {
-        const { nombre, img, correo } = yield (0, google_verify_1.googleVerify)(id_token);
+        const { nombre, img, correo } = yield (0, helpers_1.googleVerify)(id_token);
         let usuario = yield models_1.Usuario.findOne({ correo });
         if (!usuario) {
             const data = {
@@ -81,7 +80,7 @@ const googleSignIn = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             });
         }
         // Generar el JWT	
-        const jwt = yield (0, generarJWT_1.generarJWT)(usuario.id);
+        const jwt = yield (0, helpers_1.generarJWT)(usuario.id);
         res.json({
             usuario,
             jwt

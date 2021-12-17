@@ -6,7 +6,7 @@ import {
     validarJWT,
     esAdminRole
 } from "../middlewares";
-import { existeProductoById, existeCategoriaById } from "../helpers/db-validators";
+import { dbValidators } from "../helpers";
 
 import { getProducto, getProductos, postProducto, putProducto, deleteProducto} from "../controllers/productos";
 
@@ -22,7 +22,7 @@ router.get('/', getProductos);
 // Obtener un producto - publico
 router.get('/:id',[
     check('id', 'No es un ID  válido').isMongoId(),
-    check('id', 'El producto no existe').custom(existeProductoById),
+    check('id', 'El producto no existe').custom(dbValidators.existeProductoById),
     validarCampos
 ], getProducto)
 
@@ -31,7 +31,7 @@ router.post('/',[
     validarJWT,
     check('nombre', 'El nombre es obligatorio').notEmpty(),
     check('categoria', 'No es un ID válido').isMongoId(),
-    check('categoria').custom(existeCategoriaById),
+    check('categoria').custom(dbValidators.existeCategoriaById),
     validarCampos
 ], postProducto)
 
@@ -39,7 +39,7 @@ router.post('/',[
 router.put('/:id',[
     validarJWT,
     check('id', 'No es un ID  válido').isMongoId(),
-    check('id', 'El producto no existe').custom(existeProductoById),
+    check('id', 'El producto no existe').custom(dbValidators.existeProductoById),
     validarCampos
 ], putProducto)
 
@@ -47,7 +47,7 @@ router.put('/:id',[
 router.delete('/:id',[
     validarJWT,
     check('id', 'No es un ID  válido').isMongoId(),
-    check('id', 'El producto no existe').custom(existeProductoById),
+    check('id', 'El producto no existe').custom(dbValidators.existeProductoById),
     esAdminRole,
     validarCampos
 

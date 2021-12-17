@@ -1,13 +1,17 @@
 
-import validarCampos from "../middlewares/validar-campos";
-import validarJWT from "../middlewares/validar-jwt";
-import {tieneRole, esAdminRole} from "../middlewares/validar-roles";
+import validarCampos from "./validar-campos";
+import validarJWT from "./validar-jwt";
+import {tieneRole, esAdminRole} from "./validar-roles";
+import validarFiles from './validar-files'
+import coleccionValidator from "./coleccion-validator";
 
 export {
     validarCampos,
     validarJWT,
     tieneRole, 
-    esAdminRole
+    esAdminRole,
+    validarFiles,
+    coleccionValidator
 };
 
 
