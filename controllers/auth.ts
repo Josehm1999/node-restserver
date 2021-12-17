@@ -5,8 +5,6 @@ import {Usuario} from "../models";
 import {generarJWT, googleVerify} from "../helpers";
 
 const login = async(req: Request<{},{},{
-    correo: string,
-    password: string
 },{}>, res: Response) => {
 
     const {correo, password} = req.body;
